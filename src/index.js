@@ -1,34 +1,58 @@
-import { NearContract, NearBindgen, near, call, view } from 'near-sdk-js'
-import { isUndefined } from 'lodash-es'
+/*
+ * Example smart contract written in JavaScript
+ *
+ */
 
-@NearBindgen
-class Counter extends NearContract {
-    constructor({ initial = 0 }) {
-        super()
-        this.count = initial
-    }
+import { NearContract, NearBindgen, near, call, view, Vector } from 'near-sdk-js'
 
-    @call
-    increase({ n = 1 }) {
-        this.count += n
-        near.log(`Counter increased to ${this.count}`)
-    }
+// The maximum number of latest messages the contract returns.
+const MESSAGE_LIMIT = 10;
 
-    @call
-    decrease({ n }) {
-        // you can use default argument `n=1` too
-        // this is to illustrate a npm dependency: lodash can be used
-        if (isUndefined(n)) {
-            this.count -= 1
-        } else {
-            this.count -= n
-        }
-        near.log(`Counter decreased to ${this.count}`)
-    }
+// If the user attaches more than 0.01N the message is premium
+const PREMIUM_PRICE = BigInt('10000000000000000000000');
 
-    @view
-    getCount() {
-        return this.count
+/** 
+ * Creating a new class PostedMessage to keep track of important information
+ */
+class PostedMessage {
+    constructor(text) {
+        this.premium = near.attachedDeposit() >= PREMIUM_PRICE;
+        this.sender = near.predecessorAccountId();
+        this.text = text;
     }
 }
 
+// Define the contract structure
+@NearBindgen
+class Contract extends NearContract {
+    // Define the constructor, which sets the message equal to the default message.
+    constructor() {
+        super()
+        this.messages = new Vector('m');
+    }
+
+    deserialize() {
+        super.deserialize()
+        this.messages = Object.assign(new Vector, this.messages)
+    }
+
+    @call
+    // Adds a new message under the name of the sender's account id.
+    add_message({ text }) {
+        const message = new PostedMessage(text);
+        near.log(message);
+        this.messages.push(message);
+    }
+    
+    @view
+    // Returns an array of last N messages.
+    get_messages() {
+        const numMessages = Math.min(MESSAGE_LIMIT, this.messages.length);
+        const startIndex = this.messages.length - numMessages;
+        const result = [];
+        for(let i = 0; i < numMessages; i++) {
+            result[i] = this.messages.get(i + startIndex);
+        }
+        return result;
+    }
+}
