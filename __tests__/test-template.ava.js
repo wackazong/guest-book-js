@@ -1,64 +1,65 @@
-import { Worker } from 'near-workspaces';
-import test from 'ava';
+import { Worker, NEAR } from "near-workspaces";
+import test from "ava";
 
-test.beforeEach(async t => {
+test.beforeEach(async (t) => {
     // Init the worker and start a Sandbox server
     const worker = await Worker.init();
 
-    // Prepare sandbox for tests, create accounts, deploy contracts, etc.
+    // deploy contract
     const root = worker.rootAccount;
-
-    // Deploy the counter contract.
-    const counter = await root.createAndDeploy(
-        root.getSubAccount('counter').accountId,
-        './build/contract.wasm'
+    const contract = await root.devDeploy("./build/contract.wasm", 
+    { initialBalance: NEAR.parse("30 N").toJSON(), method: "init", args: {} }
     );
 
-    // Init the contract
-    await counter.call(counter, 'init', {});
+    // some test accounts
+    const alice = await root.createSubAccount("alice", {
+        initialBalance: NEAR.parse("30 N").toJSON(),
+    });
+    const bob = await root.createSubAccount("bob", {
+        initialBalance: NEAR.parse("30 N").toJSON(),
+    });
+    const charlie = await root.createSubAccount("charlie", {
+        initialBalance: NEAR.parse("30 N").toJSON(),
+    });
 
-    // Test users
-    const ali = await root.createSubAccount('ali');
-    const bob = await root.createSubAccount('bob');
-
-    // Save state for test runs
+    // Save state for test runs, it is unique for each test
     t.context.worker = worker;
-    t.context.accounts = { root, counter, ali, bob };
+    t.context.accounts = { root, contract, alice, bob, charlie };
 });
 
-// If the environment is reused, use test.after to replace test.afterEach
-test.afterEach(async t => {
-    await t.context.worker.tearDown().catch(error => {
-        console.log('Failed to tear down the worker:', error);
+test.afterEach(async (t) => {
+    // Stop Sandbox server
+    await t.context.worker.tearDown().catch((error) => {
+        console.log("Failed to stop the Sandbox:", error);
     });
 });
 
-test('Initial count is 0', async t => {
-    const { counter } = t.context.accounts;
-    const result = await counter.view('getCount', {});
-    t.is(result, 0);
+test("send one message and retrieve it", async (t) => {
+    const { root, contract } = t.context.accounts;
+    await root.call(contract, "add_message", { text: "aloha" });
+    const msgs = await contract.view("get_messages");
+    const expectedMessagesResult = [
+        {
+            premium: false,
+            sender: root.accountId,
+            text: "aloha",
+        },
+    ];
+    t.deepEqual(msgs, expectedMessagesResult);
 });
 
-test('Increase works', async t => {
-    const { counter, ali, bob } = t.context.accounts;
-    await ali.call(counter, 'increase', {});
-
-    let result = await counter.view('getCount', {});
-    t.is(result, 1);
-
-    await bob.call(counter, 'increase', { n: 4 });
-    result = await counter.view('getCount', {});
-    t.is(result, 5);
-});
-
-test('Decrease works', async t => {
-    const { counter, ali, bob } = t.context.accounts;
-    await ali.call(counter, 'decrease', {});
-
-    let result = await counter.view('getCount', {});
-    t.is(result, -1);
-
-    await bob.call(counter, 'decrease', { n: 4 });
-    result = await counter.view('getCount', {});
-    t.is(result, -5);
+test("send two messages and expect two total", async (t) => {
+    const { root, contract, alice } = t.context.accounts;
+    await root.call(contract, "add_message", { text: "aloha" });
+    await alice.call(contract, "add_message", { text: "hola" });
+    const msgs = await contract.view("get_messages");
+    const expected = [
+        {
+            premium: false,
+            sender: root.accountId,
+            text: "aloha",
+        },
+        { premium: false, sender: alice.accountId, text: "hola" },
+    ];
+    t.deepEqual(msgs, expected);
 });
