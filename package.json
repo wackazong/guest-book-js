@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "npm run build:contract && npm run build:web",
-    "build:contract": "near-sdk build",
+    "build:contract": "near-sdk-js build src/index.ts build/contract.wasm",
     "build:web": "parcel build frontend/index.html --public-url ./",
     "deploy": "npm run build:contract && near dev-deploy --wasmFile build/contract.wasm",
     "start": "npm run deploy && echo The app is starting! && env-cmd -f ./neardev/dev-account.env parcel frontend/index.html --open",
@@ -19,7 +19,7 @@
     "big.js": "^6.2.0",
     "env-cmd": "^10.1.0",
     "near-api-js": "^0.45.1",
-    "near-sdk-js": "^0.4.0-2",
+    "near-sdk-js": "^0.4.0-3",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -32,6 +32,7 @@
     "nodemon": "^2.0.18",
     "parcel-bundler": "^1.12.5",
     "react": "^18.2.0",
-    "sass": "^1.54.0"
+    "sass": "^1.54.0",
+    "typescript": "^4.7.4"
   }
 }
