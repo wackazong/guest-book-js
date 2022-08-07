@@ -36,8 +36,8 @@ test.afterEach(async (t) => {
 
 test("send one message and retrieve it", async (t) => {
     const { root, contract } = t.context.accounts;
-    await root.call(contract, "add_message", { text: "aloha" });
-    const msgs = await contract.view("get_messages");
+    await root.call(contract, "addMessage", { text: "aloha" });
+    const msgs = await contract.view("getMessages");
     const expectedMessagesResult = [
         {
             premium: false,
@@ -50,9 +50,9 @@ test("send one message and retrieve it", async (t) => {
 
 test("send two messages and expect two total", async (t) => {
     const { root, contract, alice } = t.context.accounts;
-    await root.call(contract, "add_message", { text: "aloha" });
-    await alice.call(contract, "add_message", { text: "hola" });
-    const msgs = await contract.view("get_messages");
+    await root.call(contract, "addMessage", { text: "aloha" });
+    await alice.call(contract, "addMessage", { text: "hola" });
+    const msgs = await contract.view("getMessages");
     const expected = [
         {
             premium: false,

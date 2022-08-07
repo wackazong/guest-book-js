@@ -14,7 +14,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
 
   useEffect(() => {
     // TODO: don't just fetch once; subscribe!
-    contract.get_messages().then(setMessages);
+    contract.getMessages().then(setMessages);
   }, []);
 
   const onSubmit = (e) => {
@@ -27,12 +27,12 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
     // TODO: optimistically update page with new message,
     // update blockchain data in background
     // add uuid to each message, so we know which one is already known
-    contract.add_message(
+    contract.addMessage(
       { text: message.value },
       BOATLOAD_OF_GAS,
       Big(donation.value || '0').times(10 ** 24).toFixed()
     ).then(() => {
-      contract.get_messages().then(messages => {
+      contract.getMessages().then(messages => {
         setMessages(messages);
         message.value = '';
         donation.value = SUGGESTED_DONATION;
@@ -44,7 +44,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
 
   const signIn = () => {
     wallet.requestSignIn(
-      {contractId: nearConfig.contractName, methodNames: [contract.add_message.name]}, //contract requesting access
+      {contractId: nearConfig.contractName, methodNames: [contract.addMessage.name]}, //contract requesting access
       'NEAR Guest Book', //optional name
       null, //optional URL to redirect to if the sign in was successful
       null //optional URL to redirect to if the sign in was NOT successful

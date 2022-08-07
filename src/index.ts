@@ -34,9 +34,13 @@ class Contract extends NearContract {
         this.messages = [];
     }
 
+    default() {
+        return new Contract()
+    }
+
     @call
     // Adds a new message under the name of the sender's account id.
-    add_message({ text }: { text: string }): PostedMessage {
+    addMessage({ text }: { text: string }): PostedMessage {
         const message = new PostedMessage(text);
         near.log(message);
         this.messages.push(message);
@@ -45,8 +49,8 @@ class Contract extends NearContract {
     
     @view
     // Returns an array of last N messages.
-    get_messages({ from_index = 0, limit = 10 }: { from_index: number, limit: number }): PostedMessage[] {
-        // Paginate the messages using the from_index and limit parameters
-        return this.messages.slice(from_index, from_index + limit);
+    getMessages({ fromIndex = 0, limit = 10 }: { fromIndex: number, limit: number }): PostedMessage[] {
+        // Paginate the messages using the fromIndex and limit parameters
+        return this.messages.slice(fromIndex, fromIndex + limit);
     }
 }

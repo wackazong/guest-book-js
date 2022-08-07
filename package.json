@@ -11,7 +11,7 @@
     "deploy": "npm run build:contract && rm -rf neardev && near dev-deploy build/contract.wasm && export $(cat ./neardev/dev-account.env) && echo $CONTRACT_NAME && near call $CONTRACT_NAME init --accountId $CONTRACT_NAME",
     "start": "npm run deploy && echo The app is starting! && export $(cat ./neardev/dev-account.env) && echo $CONTRACT_NAME && parcel frontend/index.html --open",
     "dev": "npm run deploy && nodemon --watch contract -e ts --exec \"npm run start\"",
-    "test": "ava --verbose"
+    "test": "yarn build:contract && ava --verbose"
   },
   "author": "Near Inc <hello@nearprotocol.com>",
   "license": "Apache-2.0",
@@ -19,7 +19,7 @@
     "big.js": "^6.2.0",
     "env-cmd": "^10.1.0",
     "near-api-js": "^0.45.1",
-    "near-sdk-js": "^0.4.0-3",
+    "near-sdk-js": "^0.4.0-5",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
