@@ -1,38 +1,20 @@
 {
-  "name": "template",
+  "name": "guest-book-js",
   "version": "1.0.0",
-  "description": "Contract template with near-sdk-js",
-  "main": "index.js",
-  "type": "module",
+  "license": "(MIT AND Apache-2.0)",
   "scripts": {
+    "start": "cd frontend && npm run start",
+    "deploy": "cd contract && npm run deploy",
     "build": "npm run build:contract && npm run build:web",
-    "build:contract": "near-sdk-js build src/index.ts build/contract.wasm",
-    "build:web": "parcel build frontend/index.html --public-url ./",
-    "deploy": "npm run build:contract && rm -rf neardev && near dev-deploy build/contract.wasm && export $(cat ./neardev/dev-account.env) && echo $CONTRACT_NAME && near call $CONTRACT_NAME init --accountId $CONTRACT_NAME",
-    "start": "npm run deploy && echo The app is starting! && export $(cat ./neardev/dev-account.env) && echo $CONTRACT_NAME && parcel frontend/index.html --open",
-    "dev": "npm run deploy && nodemon --watch contract -e ts --exec \"npm run start\"",
-    "test": "yarn build:contract && ava --verbose"
-  },
-  "author": "Near Inc <hello@nearprotocol.com>",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "big.js": "^6.2.0",
-    "env-cmd": "^10.1.0",
-    "near-api-js": "^0.45.1",
-    "near-sdk-js": "^0.4.0-5",
-    "prop-types": "^15.8.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "regenerator-runtime": "^0.13.9"
+    "build:web": "cd frontend && npm run build",
+    "build:contract": "cd contract && npm run build",
+    "test": "npm run build:contract && npm run test:unit && npm run test:integration",
+    "test:unit": "cd contract && npm test",
+    "test:integration": "cd integration-tests && npm test -- -- \"./contract/build/contract.wasm\"",
+    "postinstall": "cd frontend && npm install && cd .. && cd integration-tests && npm install && cd .. && cd contract && npm install"
   },
   "devDependencies": {
-    "ava": "^4.3.1",
-    "near-cli": "^3.3.1",
-    "near-workspaces": "^3.1.0",
-    "nodemon": "^2.0.18",
-    "parcel-bundler": "^1.12.5",
-    "react": "^18.2.0",
-    "sass": "^1.54.0",
-    "typescript": "^4.7.4"
-  }
+    "near-cli": "^3.3.0"
+  },
+  "dependencies": {}
 }
