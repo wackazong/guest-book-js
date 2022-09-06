@@ -11,7 +11,7 @@ export default function SignIn() {
           include a donation, your message gets posted right to the guest book.
       </p>
       <p>
-          But if you do add a donation, then NEAR will double-check that
+          But, if you do add a donation, then NEAR will double-check that
           you’re ok with sending money to this app.
       </p>
       <p>
