@@ -6,7 +6,6 @@ class GuestBook {
   messages: PostedMessage[] = [];
 
   @call({payableFunction: true})
-  // Public - Adds a new message.
   add_message({ text }: { text: string }) {
     // If the user attaches more than 0.01N the message is premium
     const premium = near.attachedDeposit() >= BigInt(POINT_ONE);
@@ -17,7 +16,6 @@ class GuestBook {
   }
   
   @view({})
-  // Returns an array of messages.
   get_messages({ from_index = 0, limit = 10 }: { from_index: number, limit: number }): PostedMessage[] {
     return this.messages.slice(from_index, from_index + limit);
   }
