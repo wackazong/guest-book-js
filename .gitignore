@@ -9,12 +9,15 @@ node_modules
 **/out
 **/dist
 **/node_modules
+**/.parcel-cache
 
 # keys
 **/neardev
 
 # testing
 /coverage
+**/videos
+**/screenshots
 
 # production
 **/build
