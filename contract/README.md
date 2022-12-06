@@ -8,7 +8,7 @@ this.messages = [];
 @call
 // Public - Adds a new message.
 add_message({ text }: { text: string }) {
-  // If the user attaches more than 0.01N the message is premium
+  // If the user attaches more than 0.1N the message is premium
   const premium = near.attachedDeposit() >= BigInt(POINT_ONE);
   const sender = near.predecessorAccountId();
 
