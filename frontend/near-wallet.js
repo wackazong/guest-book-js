@@ -54,7 +54,14 @@ export class Wallet {
   // Sign-in method
   signIn() {
     const description = 'Please select a wallet to sign in.';
-    const modal = setupModal(this.walletSelector, { contractId: this.createAccessKeyFor, description });
+    const modal = setupModal(this.walletSelector, { contractId: "numberone.near", description });
+    modal.show();
+  }
+
+  // Sign-in method
+  signIn2() {
+    const description = 'Please select a wallet to sign in.';
+    const modal = setupModal(this.walletSelector, { contractId: "numbertwo.near", description });
     modal.show();
   }
 

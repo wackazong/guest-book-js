@@ -30,6 +30,8 @@ const App = ({ isSignedIn, guestBook, wallet }) => {
 
   const signIn = () => { wallet.signIn() }
 
+  const signIn2 = () => { wallet.signIn2() }
+
   const signOut = () => { wallet.signOut() }
 
   return (
@@ -39,7 +41,7 @@ const App = ({ isSignedIn, guestBook, wallet }) => {
           <td><h1>📖 NEAR Guest Book</h1></td>
           <td>{ isSignedIn
           ? <button onClick={signOut}>Log out</button>
-          : <button onClick={signIn}>Log in</button>
+          : <div><button onClick={signIn}>Log in</button><button onClick={signIn2}>Log in2</button></div>
         }</td>
         </tr>
       </table>

@@ -10,9 +10,9 @@ export class GuestBook {
   }
 
   async getMessages() {
-    const messages = await this.wallet.viewMethod({ contractId: this.contractId, method: "get_messages" })
-    console.log(messages)
-    return messages
+    // const messages = await this.wallet.viewMethod({ contractId: this.contractId, method: "get_messages" })
+    // console.log(messages)
+    return []
   }
 
   async addMessage(message, donation) {
